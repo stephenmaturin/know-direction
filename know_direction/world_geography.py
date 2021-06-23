@@ -177,10 +177,10 @@ class WorldGeography:
     cities: Collection[PopulatedPlace] = attrib(validator=deep_iterable(instance_of(PopulatedPlace)))
     rivers: Collection[River] =attrib(validator=deep_iterable(instance_of(River)))
     city_name_to_city: Mapping[str, PopulatedPlace] = attrib(init=False)
-    city_kd_tree: GeoPointProximity[PopulatedPlace] = attrib(
+    city_proximity: GeoPointProximity[PopulatedPlace] = attrib(
         init=False,
         default = Factory(lambda self: GeoPointProximity.create_from(self.cities), takes_self=True))
-    river_endpoints_kd_tree: GeoPointProximity[RiverPoint] = attrib(init=False)
+    river_endpoints_proximity: GeoPointProximity[RiverPoint] = attrib(init=False)
 
     @staticmethod
     def from_directory(data_directory: Path) -> "WorldGeography":
@@ -193,7 +193,7 @@ class WorldGeography:
             city.name : city for city in self.cities
         }
 
-    @river_endpoints_kd_tree.default
+    @river_endpoints_proximity.default
     def _init_river_endpoint_kd_tree(self) -> GeoPointProximity:
         return GeoPointProximity.create_from(
             [river.start for river in self.rivers] + [river.end for river in self.rivers])
