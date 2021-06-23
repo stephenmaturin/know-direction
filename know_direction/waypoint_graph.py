@@ -24,7 +24,7 @@ class WaypointGraph:
         WaypointGraph._build_waypoints_from_rivers(world_geography.rivers, waypoint_graph)
 
         logging.info("Adding city-to-city connections")
-        WaypointGraph._add_city_to_city_connections(world_geography.cities, waypoint_graph)
+        WaypointGraph._add_city_to_city_connections(world_geography, waypoint_graph)
 
         logging.info("Adding connections between rivers and rivers")
         WaypointGraph._add_river_to_river_connections(world_geography=world_geography,
@@ -35,9 +35,11 @@ class WaypointGraph:
                                                   waypoint_graph=waypoint_graph)
 
     @staticmethod
-    def _add_city_to_city_connections(cities: Collection[PopulatedPlace], waypoint_graph: networkx.DiGraph) -> None:
-        for city in cities:
-            for other_city in cities:
+    def _add_city_to_city_connections(world_geography: WorldGeography,
+                                      waypoint_graph: networkx.DiGraph) -> None:
+        # We connect each city to the 30 closest cities
+        for city in world_geography.cities:
+            for other_city in world_geography.city_kd_tree.closest_n_points_to(city, 30):
                 if city != other_city:
                     distance_between_cities = city.distance_to(other_city)
                     waypoint_graph.add_edge(city, other_city, distance=distance_between_cities,
