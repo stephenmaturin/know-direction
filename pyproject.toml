@@ -12,7 +12,7 @@ attrs = "^21.2.0"
 networkx = "^2.5.1"
 more-itertools = "^8.8.0"
 black = "^21.6b0"
-scipy = "^1.7.0"
+sklearn = "^0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

@@ -27,7 +27,8 @@ class WaypointGraph:
         WaypointGraph._add_city_to_city_connections(world_geography.cities, waypoint_graph)
 
         logging.info("Adding connections between rivers and rivers")
-        WaypointGraph._add_river_to_river_connections(world_geography.rivers, waypoint_graph)
+        WaypointGraph._add_river_to_river_connections(world_geography=world_geography,
+                                                      waypoint_graph=waypoint_graph)
 
         logging.info("Adding connections between rivers and cities")
         WaypointGraph._add_city_river_connections(cities=world_geography.cities, rivers=world_geography.rivers,
@@ -61,23 +62,28 @@ class WaypointGraph:
 
 
     @staticmethod
-    def _add_river_to_river_connections(rivers: Collection[River], waypoint_graph: networkx.DiGraph) -> None:
-        for river1 in rivers:
-            for river2 in rivers:
-                if river1 != river2:
-                    (closest_point_on_river1, closest_point_on_river2) = min(
-                        [(river1_point, river2_point)
-                         for river1_point in river1.points_in_direction_of_water_flow
-                         for river2_point in river2.points_in_direction_of_water_flow],
-                        key=lambda p1p2: p1p2[0].distance_to(p1p2[1])
-                    )
-                    distance_between_rivers = closest_point_on_river1.distance_to(closest_point_on_river2)
-                    waypoint_graph.add_edge(closest_point_on_river1, closest_point_on_river2,
-                                            distance=distance_between_rivers,
-                                            travel_mode=TravelMode.OVERLAND)
-                    waypoint_graph.add_edge(closest_point_on_river2, closest_point_on_river1,
-                                            distance=distance_between_rivers,
-                                            travel_mode=TravelMode.OVERLAND)
+    def _add_river_to_river_connections(*,
+                                        waypoint_graph: networkx.DiGraph,
+                                        world_geography: WorldGeography) -> None:
+        for river in world_geography.rivers:
+            # We connect each river endpoint to its 10 closest other river endpoints,
+            # at most one of which can be from the same river
+            for other_river_endpoint in world_geography.river_endpoints_kd_tree.closest_n_points_to(river.start, 10):
+                distance_between_points = river.start.distance_to(other_river_endpoint)
+                waypoint_graph.add_edge(river.start, other_river_endpoint,
+                                        distance=distance_between_points,
+                                        travel_mode=TravelMode.OVERLAND)
+                waypoint_graph.add_edge(other_river_endpoint, river.start,
+                                        distance=distance_between_points,
+                                        travel_mode=TravelMode.OVERLAND)
+            for other_river_endpoint in world_geography.river_endpoints_kd_tree.closest_n_points_to(river.end, 10):
+                distance_between_points = river.end.distance_to(other_river_endpoint)
+                waypoint_graph.add_edge(river.end, other_river_endpoint,
+                                        distance=distance_between_points,
+                                        travel_mode=TravelMode.OVERLAND)
+                waypoint_graph.add_edge(other_river_endpoint, river.end,
+                                        distance=distance_between_points,
+                                        travel_mode=TravelMode.OVERLAND)
 
     @staticmethod
     def _build_waypoints_from_rivers(rivers: Collection[River], waypoint_graph: networkx.DiGraph) -> None:
