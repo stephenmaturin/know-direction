@@ -147,7 +147,6 @@ _T = TypeVar(name="_T", bound=GeoPoint)
 @attrs
 class GeoPointProximity(Generic[_T]):
     _ball_tree: BallTree = attrib(validator=instance_of(BallTree))
-    #_geopoints_by_coordinates: Mapping[Tuple[float, float], List[_T]] = attrib()
     _geopoints = attrib(validator=deep_iterable(instance_of(GeoPoint)))
 
     @staticmethod
@@ -155,10 +154,6 @@ class GeoPointProximity(Generic[_T]):
         geopoints = tuple(points)
         geopoint_coordinates_in_radians = [(point.latitude_radians, point.longitude_radians)
                                            for point in geopoints]
-
-        # geopoints_by_coordinates = defaultdict(list)
-        # for point in points:
-        #     geopoints_by_coordinates[(point.latitude_radians, point.longitude_radians)].append(point)
 
         return GeoPointProximity(
             BallTree(data=tuple(geopoint_coordinates_in_radians), metric="haversine"),
