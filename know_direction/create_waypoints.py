@@ -8,7 +8,7 @@ from attr import attrib, attrs
 from attr.validators import instance_of, optional
 from more_itertools import windowed
 
-from know_direction.travel_speed import SpeedInfo, DEFAULT_SPEED_INFO, TravelMode
+from know_direction.travel_speed import SpeedInfo, DEFAULT_SPEED_INFO, TravelMode, ON_HORSE_AND_ROWING_SPEED_INFO
 from know_direction.waypoint_graph import WaypointGraph
 from know_direction.world_geography import GeoPoint, WorldGeography, RiverPoint
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     print(f"Number of connected components: {networkx.number_strongly_connected_components(waypoint_graph.graph)}")
 
     logging.info("Computing travel times for each segment")
-    decorate_with_travel_time_in_place(waypoint_graph.graph, DEFAULT_SPEED_INFO)
+    decorate_with_travel_time_in_place(waypoint_graph.graph, ON_HORSE_AND_ROWING_SPEED_INFO)
 
     while True:
         print("Enter source city:")

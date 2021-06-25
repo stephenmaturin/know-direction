@@ -43,10 +43,18 @@ class SpeedInfo:
             raise RuntimeError(f"Unknown travel mode {travel_mode}")
 
 ON_FOOT = OverlandSpeedInfo(overland_speed_in_mile_per_day = 20.0)
+ON_HORSE = OverlandSpeedInfo(overland_speed_in_mile_per_day = 30.0)
+ON_HORSE_URGENT = OverlandSpeedInfo(overland_speed_in_mile_per_day = 67.0)
+
 
 NORMAL_RIVER = RiverSpeedInfo(
 upstream_speed_in_miles_per_day = 15.0,
 downstream_speed_in_miles_per_day=40.0
+)
+
+ROWED_RIVER =  RiverSpeedInfo(
+upstream_speed_in_miles_per_day = 31.0,
+downstream_speed_in_miles_per_day=75.0
 )
 
 
@@ -59,3 +67,10 @@ DEFAULT_SPEED_INFO = SpeedInfo(
     river_speeds=NORMAL_RIVER,
     sea_speeds=NORMAL_SEA
 )
+
+ON_HORSE_AND_ROWING_SPEED_INFO = SpeedInfo(
+    overland_speeds = ON_HORSE,
+    river_speeds=ROWED_RIVER,
+    sea_speeds=NORMAL_SEA
+)
+
