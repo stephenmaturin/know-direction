@@ -45,9 +45,10 @@ class SpeedInfo:
 ON_FOOT = OverlandSpeedInfo(overland_speed_in_mile_per_day = 20.0)
 
 NORMAL_RIVER = RiverSpeedInfo(
-upstream_speed_in_miles_per_day = 40.0,
-downstream_speed_in_miles_per_day=15.0
+upstream_speed_in_miles_per_day = 15.0,
+downstream_speed_in_miles_per_day=40.0
 )
+
 
 NORMAL_SEA = SeaSpeedInfo(
 seas_speed_in_miles_per_day = 100.0

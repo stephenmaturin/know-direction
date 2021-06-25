@@ -12,11 +12,11 @@ from know_direction.world_geography import WorldGeography, PopulatedPlace, River
 
 @attrs
 class WaypointGraph:
-    graph: networkx.DiGraph = attrib(validator=instance_of(networkx.DiGraph))
+    graph: networkx.MultiDiGraph = attrib(validator=instance_of(networkx.MultiDiGraph))
 
     @staticmethod
     def create_from(world_geography: WorldGeography) -> "WaypointGraph":
-        waypoint_graph = networkx.DiGraph()
+        waypoint_graph = networkx.MultiDiGraph()
 
         waypoint_graph.add_nodes_from(world_geography.cities)
 
@@ -33,6 +33,7 @@ class WaypointGraph:
         logging.info("Adding connections between rivers and cities")
         WaypointGraph._add_city_river_connections(world_geography=world_geography,
                                                   waypoint_graph=waypoint_graph)
+        return WaypointGraph(waypoint_graph)
 
 
     @staticmethod
